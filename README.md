@@ -7,6 +7,58 @@ Monorepo layout:
 - `libs/shared` — Shared TypeScript types (`@hospital/shared`)
 - `[docker-compose.yml](docker-compose.yml)` — local **PostgreSQL** in Docker (recommended for development)
 
+## Quick start — run the software
+
+Use this path on your development PC when you already have **Node.js LTS** and **Docker Desktop** (or another PostgreSQL server).
+
+| Step | Command / action |
+| ---- | ---------------- |
+| 1 | From the repository root: `npm install` |
+| 2 | Copy env: `cp .env.example .env` (Windows: copy `.env.example` to `.env`). Edit `DB_PASS` / `JWT_SECRET` if needed. Defaults match Docker Compose. |
+| 3 | Start Postgres: `docker compose up -d` (wait until the container is healthy). |
+| 4 | Apply SQL migrations: `npm run migrate:run` |
+| 5 | Run API + web together: `npm start` |
+| 6 | Open **http://localhost:4200** — the dev server proxies `/api` to **http://localhost:3000**. |
+
+**Alternative (two terminals):** `npm run start:api` and `npm run start:web`.
+
+**Windows helper:** double‑click `scripts\windows\start-hospital.bat` (starts Docker if needed, migrates, runs `npm start`). See [`scripts/windows/README.md`](scripts/windows/README.md).
+
+### Default login accounts
+
+Created automatically on first API start **only if** those emails do not already exist in the database.
+
+| Role | Email | Password |
+| ---- | ----- | -------- |
+| Admin | `admin@hospital.local` | `admin123` |
+| Receptionist | `reception@hospital.local` | **`recept123`** (note: **recept**, not “reception”) |
+| Lab | `lab@hospital.local` | `lab12345` |
+
+Doctor accounts are created under **Admin → Doctors** with the password you set there.
+
+### When login says “failed” / wrong password
+
+- The API returns **Invalid credentials** for **both** wrong email and wrong password — double‑check spelling (especially **`recept123`**).
+- Leading/trailing spaces in **email** are trimmed on the server and client; passwords are compared exactly.
+- If users were created earlier, seed logic **does not reset** passwords. Reset the DB for dev (e.g. `docker compose down -v`, recreate DB, migrate, restart API) or change the password in PostgreSQL.
+
+### After pulling code updates
+
+```bash
+git pull
+npm install
+npm run migrate:run   # if new files appeared under scripts/migrations/
+npm start
+```
+
+### Lint (optional)
+
+```bash
+npx nx run web:lint
+```
+
+---
+
 ## Full setup from scratch (Docker + DB viewer + application)
 
 Follow these steps on the machine where you develop (Docker and your database viewer are **separate installs**: Docker runs Postgres; DBeaver/pgAdmin is only a client to browse tables).

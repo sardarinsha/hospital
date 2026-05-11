@@ -177,6 +177,22 @@ export class PatientDetailComponent implements OnInit {
     return (Math.round(s * 100) / 100).toFixed(2);
   }
 
+  feeBalanceDue(): string {
+    let s = 0;
+    for (const l of this.feeLines()) {
+      if (!l.paidAt) s += parseFloat(l.lineTotal);
+    }
+    return (Math.round(s * 100) / 100).toFixed(2);
+  }
+
+  feePaidTotal(): string {
+    let s = 0;
+    for (const l of this.feeLines()) {
+      if (l.paidAt) s += parseFloat(l.lineTotal);
+    }
+    return (Math.round(s * 100) / 100).toFixed(2);
+  }
+
   catalogSelectOptions(): { label: string; value: string }[] {
     return this.catalogItems().map((c) => ({
       label: `${c.name} (${c.defaultPrice})`,
@@ -345,6 +361,45 @@ export class PatientDetailComponent implements OnInit {
     const p = this.patient();
     if (!p) return;
     void this.router.navigate(['/patients', p.id, 'fees-print-pos', row.id]);
+  }
+
+  receiveFeePayment(line: PatientFeeLine): void {
+    const p = this.patient();
+    if (!p) return;
+    this.feesApi.recordPayment(p.id, line.id).subscribe({
+      next: () => {
+        this.messages.add({
+          severity: 'success',
+          summary: 'Payment recorded',
+        });
+        this.loadFees(p.id);
+      },
+      error: () =>
+        this.messages.add({
+          severity: 'error',
+          summary: 'Could not record payment',
+        }),
+    });
+  }
+
+  voidFeePayment(line: PatientFeeLine): void {
+    const p = this.patient();
+    if (!p) return;
+    if (!confirm('Mark this charge as not paid?')) return;
+    this.feesApi.voidPayment(p.id, line.id).subscribe({
+      next: () => {
+        this.messages.add({
+          severity: 'success',
+          summary: 'Payment cleared',
+        });
+        this.loadFees(p.id);
+      },
+      error: () =>
+        this.messages.add({
+          severity: 'error',
+          summary: 'Could not update payment',
+        }),
+    });
   }
 
   remove(): void {

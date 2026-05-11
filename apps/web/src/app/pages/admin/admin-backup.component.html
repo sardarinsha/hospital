@@ -1,0 +1,25 @@
+<p-toast />
+<p-card header="Data backup">
+  <p class="hint">
+    Exports a single JSON file with users (including password hashes), patients,
+    charges, lab data, doctors, and the finance ledger. Treat it as highly
+    confidential. The app does not upload to Gmail or cloud automatically — after
+    download, save the file where you want (USB drive, D:, network share), email
+    it to yourself, or upload it to Google Drive / OneDrive manually.
+  </p>
+  <div class="row">
+    <p-button
+      label="Download full backup (JSON)"
+      icon="pi pi-download"
+      [loading]="downloading"
+      (onClick)="download()"
+    />
+    <p-button
+      label="Back to dashboard"
+      icon="pi pi-arrow-left"
+      severity="secondary"
+      [outlined]="true"
+      routerLink="/admin/dashboard"
+    />
+  </div>
+</p-card>

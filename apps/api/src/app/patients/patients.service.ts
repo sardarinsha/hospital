@@ -145,9 +145,18 @@ export class PatientsService {
   async update(
     id: string,
     patch: Partial<CreatePatientDto>,
+    actor?: { role: Role; userId: string },
   ): Promise<Patient> {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new NotFoundException('Patient not found');
+    if (
+      actor?.role === Role.RECEPTIONIST &&
+      entity.registeredById !== actor.userId
+    ) {
+      throw new ForbiddenException(
+        'You can only edit patients you registered.',
+      );
+    }
     if (patch.firstName !== undefined)
       entity.firstName = patch.firstName.trim();
     if (patch.lastName !== undefined) entity.lastName = patch.lastName.trim();

@@ -14,6 +14,10 @@ export enum Permission {
   DASHBOARD_LAB = 'DASHBOARD_LAB',
   DASHBOARD_DOCTOR = 'DASHBOARD_DOCTOR',
   USER_ADMIN = 'USER_ADMIN',
+  /** Record office expenses, salaries, and view ledger (reception + admin). */
+  FINANCE_LEDGER = 'FINANCE_LEDGER',
+  /** Download full-system JSON backup (admin only). */
+  DATA_BACKUP_EXPORT = 'DATA_BACKUP_EXPORT',
 }
 
 const ALL_PERMISSIONS = Object.values(Permission) as Permission[];
@@ -27,9 +31,11 @@ export function permissionsForRole(role: Role): Permission[] {
         Permission.PATIENT_VIEW,
         Permission.PATIENT_REGISTER,
         Permission.PATIENT_REGISTRATION_PRINT,
+        Permission.PATIENT_EDIT_ALL,
         Permission.FEE_LINE_MANAGE,
         Permission.FEE_CATALOG_VIEW,
         Permission.DASHBOARD_RECEPTION,
+        Permission.FINANCE_LEDGER,
       ];
     case Role.LAB_TECH:
       return [

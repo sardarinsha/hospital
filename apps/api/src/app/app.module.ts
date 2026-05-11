@@ -1,10 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { BackupModule } from './backup/backup.module';
 import { AuthModule } from './auth/auth.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { FeeCatalogItemEntity } from './fee-catalog/fee-catalog-item.entity';
 import { FeeCatalogModule } from './fee-catalog/fee-catalog.module';
+import { FinanceModule } from './finance/finance.module';
+import { OfficeLedgerEntryEntity } from './finance/office-ledger-entry.entity';
 import { TrialSettingsEntity } from './trial/trial-settings.entity';
 import { TrialModule } from './trial/trial.module';
 import { LabReportRecordEntity } from './lab-reports/lab-report-record.entity';
@@ -41,6 +44,7 @@ import { UsersModule } from './users/users.module';
           LabReportRecordEntity,
           TrialSettingsEntity,
           DoctorEntity,
+          OfficeLedgerEntryEntity,
         ],
         synchronize: config.get<string>('TYPEORM_SYNC', 'false') === 'true',
       }),
@@ -54,6 +58,8 @@ import { UsersModule } from './users/users.module';
     LabReportsModule,
     TrialModule,
     DoctorsModule,
+    FinanceModule,
+    BackupModule,
   ],
 })
 export class AppModule {}

@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Gender, Patient, PatientFeeLine } from '@hospital/shared';
 import { Button } from 'primeng/button';
 import { APP_BRANDING } from '../../core/branding';
+import { CLINIC_PRINT } from '../../core/clinic-print.constants';
 import { PatientFeesService } from '../../core/patient-fees.service';
 import { PatientsService } from '../../core/patients.service';
 
@@ -28,6 +29,7 @@ export class FeeSlipPrintComponent implements OnInit {
   readonly layoutMode = signal<FeeSlipLayoutMode>('a4');
   readonly Gender = Gender;
   readonly branding = APP_BRANDING;
+  readonly clinic = CLINIC_PRINT;
 
   readonly total = computed(() => {
     let s = 0;
@@ -80,6 +82,10 @@ export class FeeSlipPrintComponent implements OnInit {
 
   isSingleChargeSlip(): boolean {
     return !!this.selectedLine();
+  }
+
+  referredByLine(p: Patient): string {
+    return p.appointmentDoctor?.name?.trim() ?? '';
   }
 
   patientFullName(p: Patient): string {

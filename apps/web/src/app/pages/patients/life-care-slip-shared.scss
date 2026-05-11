@@ -5,6 +5,10 @@
 }
 
 .print-area.life-care-slip {
+  --lc-blue: var(--clinic-blue);
+  --lc-blue-dark: var(--clinic-blue-dark);
+  --lc-maroon: var(--clinic-maroon);
+
   width: 210mm;
   min-height: 297mm;
   max-width: 100%;
@@ -16,6 +20,8 @@
   background: #fff;
   font-size: 11px;
   line-height: 1.25;
+  display: flex;
+  flex-direction: column;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
@@ -31,6 +37,194 @@
 
 .lc-top {
   margin-bottom: 8px;
+}
+
+/* ----- Life Care letterhead (reference: logo left + THE / LIFE CARE MEDICAL CENTER) ----- */
+.lc-sheet-top-rule {
+  height: 8px;
+  background: var(--lc-blue);
+  margin: -2mm -4mm 10px;
+  border-radius: 0;
+}
+
+.lc-sheet-brand-row-ref {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+
+.lc-sheet-title-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: left;
+}
+
+.lc-sheet-the {
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--lc-blue);
+  line-height: 1;
+  margin-bottom: 3px;
+}
+
+.lc-sheet-headline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.25em;
+  font-size: 22px;
+  line-height: 1.1;
+}
+
+.lc-sheet-life-care {
+  font-weight: 900;
+  font-size: 22px;
+  color: var(--lc-blue);
+  letter-spacing: 0.05em;
+}
+
+.lc-sheet-medical-center {
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--lc-maroon);
+  letter-spacing: 0.07em;
+}
+
+/* 2×2 patient meta box (reference slip) */
+.lc-patient-grid-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid #000;
+  margin-top: 6px;
+  margin-bottom: 8px;
+}
+
+.lc-grid-cell {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 6px;
+  padding: 8px 10px;
+  font-size: 11px;
+  line-height: 1.35;
+  border-right: 1px solid #000;
+  border-bottom: 1px solid #000;
+}
+
+.lc-grid-value {
+  font-weight: 600;
+  flex: 1;
+  min-width: 0;
+}
+
+.lc-grid-cell:nth-child(2n) {
+  border-right: none;
+}
+
+.lc-grid-cell:nth-child(3),
+.lc-grid-cell:nth-child(4) {
+  border-bottom: none;
+}
+
+.lc-grid-label {
+  font-weight: 700;
+  flex: 0 0 auto;
+}
+
+.lc-grid-label::after {
+  content: ':';
+}
+
+.lc-sheet-clinic-footer {
+  margin-top: auto;
+  padding-top: 10px;
+  flex-shrink: 0;
+}
+
+/* Single blue footer bar: address | phone + rules | 24h badge */
+.lc-footer-blue-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 -4mm;
+  padding: 10px 10mm 12px;
+  background: var(--lc-blue);
+  color: #fff;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.lc-footer-address-col {
+  flex: 1 1 38%;
+  min-width: 0;
+  font-size: 8.5px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.lc-footer-address-col .lc-sheet-pin {
+  margin-right: 4px;
+  filter: grayscale(1) brightness(1.2);
+}
+
+.lc-footer-phone-cluster {
+  flex: 1 1 42%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.lc-footer-rule {
+  flex: 1 1 24px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.92);
+  max-width: 100px;
+}
+
+.lc-footer-phone {
+  flex: 0 0 auto;
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.lc-footer-badge-wrap {
+  flex: 0 0 auto;
+}
+
+.lc-badge-24.lc-badge-24--footer {
+  position: static;
+  transform: none;
+  width: 52px;
+  height: 52px;
+  border-width: 2px;
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: none;
+}
+
+.lc-badge-24--footer .lc-24-ring {
+  color: #fff;
+  font-size: 13px;
+}
+
+.lc-badge-24--footer .lc-24-text {
+  color: #fff;
+  font-size: 6px;
+}
+
+.lc-main-grow {
+  flex: 1;
+  min-height: 0;
 }
 
 .lc-brand-row {
@@ -89,7 +283,7 @@
 }
 
 .lc-pill {
-  background: #000;
+  background: var(--lc-blue);
   color: #fff;
   padding: 3px 10px;
   border-radius: 999px;
@@ -97,6 +291,7 @@
   font-weight: 600;
 }
 
+/* Urdu tagline only — 24hr badge sits in the footer band */
 .lc-banner-row {
   display: flex;
   align-items: center;
@@ -137,6 +332,7 @@
   font-size: 12px;
   font-weight: 600;
   text-align: center;
+  width: 100%;
 }
 
 .lc-patient-block {
@@ -248,4 +444,13 @@
   text-align: center;
   color: #444;
   line-height: 1.35;
+  flex-shrink: 0;
+}
+
+@media print {
+  .lc-footer-blue-bar,
+  .lc-badge-24.lc-badge-24--footer {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 }

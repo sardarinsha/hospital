@@ -26,55 +26,57 @@
 @if (record(); as r) {
   <div #printRoot class="print-area life-care-slip lab-doc">
     <header class="lc-top">
-      <div class="lc-brand-row">
-        <div class="lc-en-title">THE LIFE CARE MEDICAL CENTER</div>
+      <div class="lc-sheet-top-rule"></div>
+      <div class="lc-sheet-brand-row-ref">
         <div class="lc-logo-wrap">
           <img
             class="lc-logo-img"
             src="/assets/life-care-logo.jpeg"
-            alt="THE LIFE CARE"
+            alt=""
           />
         </div>
-        <div class="lc-ur-title" dir="rtl">دی لائف کیئر میڈیکل سینٹر</div>
-      </div>
-      <div class="lc-black-bar">
-        Opposite Pin School Main Makhad Road Jand, District Attock &nbsp;·&nbsp;
-        0345-0000000
-      </div>
-      <div class="lc-pills">
-        <span class="lc-pill" dir="rtl">لیباریٹری</span>
-        <span class="lc-pill" dir="rtl">الٹراساؤنڈ</span>
-        <span class="lc-pill" dir="rtl">ایکس رے</span>
+        <div class="lc-sheet-title-block">
+          <span class="lc-sheet-the">{{ clinic.titleThe }}</span>
+          <div class="lc-sheet-headline">
+            <span class="lc-sheet-life-care">{{ clinic.titleLifeCare }}</span>
+            <span class="lc-sheet-medical-center">{{
+              clinic.titleMedicalCenter
+            }}</span>
+          </div>
+        </div>
       </div>
     </header>
 
-    <section class="lc-patient-block lab-doc-meta">
-      <div class="lc-ref-date">
-        <div class="lc-field-inline">
-          <span class="lc-label">Ref# / MRN</span>
-          <span class="lc-line lc-line-fill">{{ r.patientMrn }}</span>
-        </div>
-        <div class="lc-field-inline lc-field-right">
-          <span class="lc-label">Date</span>
-          <span class="lc-line lc-line-fill">{{
-            printedAt() | date: 'dd/MM/yyyy'
-          }}</span>
-        </div>
+    <section class="lc-patient-block lab-doc-meta lc-patient-grid-box">
+      <div class="lc-grid-cell">
+        <span class="lc-grid-label">Patient name</span>
+        <span class="lc-grid-value">{{ r.patientName }}</span>
       </div>
-      <div class="lc-field-row">
-        <span class="lc-label">Patient's Name</span>
-        <span class="lc-line lc-line-fill lc-line-long">{{ r.patientName }}</span>
+      <div class="lc-grid-cell">
+        <span class="lc-grid-label">Date</span>
+        <span class="lc-grid-value">{{
+          printedAt() | date: 'dd/MM/yyyy'
+        }}</span>
       </div>
-      @if (r.createdByName) {
-        <div class="lc-field-row lab-tech-line">
-          <span class="lc-label">Prepared by</span>
-          <span class="lc-line lc-line-fill lc-line-long">{{ r.createdByName }}</span>
-        </div>
-      }
+      <div class="lc-grid-cell">
+        <span class="lc-grid-label">Referred by</span>
+        <span class="lc-grid-value"></span>
+      </div>
+      <div class="lc-grid-cell">
+        <span class="lc-grid-label">Patient ID #</span>
+        <span class="lc-grid-value">{{ r.patientMrn }}</span>
+      </div>
     </section>
+    @if (r.createdByName) {
+      <div class="lc-field-row lab-tech-line">
+        <span class="lc-label">Prepared by</span>
+        <span class="lc-line lc-line-fill lc-line-long">{{ r.createdByName }}</span>
+      </div>
+    }
 
     <div class="lc-rule"></div>
 
+    <div class="lc-main-grow lab-doc-body-wrap">
     @if (hasRichBody()) {
       <section class="lab-rich-print" [innerHTML]="richBodyHtml()"></section>
     } @else {
@@ -90,6 +92,27 @@
       <div class="lab-sig-line"></div>
       <div class="lab-sig-label">Radiologist / Sonologist / Technician</div>
     </div>
+    </div>
+
+    <footer class="lc-sheet-clinic-footer">
+      <div class="lc-footer-blue-bar">
+        <div class="lc-footer-address-col">
+          <span class="lc-sheet-pin" aria-hidden="true">📍</span>
+          {{ clinic.address }}
+        </div>
+        <div class="lc-footer-phone-cluster">
+          <span class="lc-footer-rule" aria-hidden="true"></span>
+          <span class="lc-footer-phone">{{ clinic.phoneDisplay }}</span>
+          <span class="lc-footer-rule" aria-hidden="true"></span>
+        </div>
+        <div class="lc-footer-badge-wrap">
+          <div class="lc-badge-24 lc-badge-24--footer" aria-hidden="true">
+            <span class="lc-24-ring">24</span>
+            <span class="lc-24-text">HOUR<br />SERVICE</span>
+          </div>
+        </div>
+      </div>
+    </footer>
 
     <p class="lc-system-footer">
       {{ branding.productShortName }} — {{ branding.designedByLine }} ·

@@ -1,0 +1,134 @@
+<p-toast />
+<div class="clinic-finance-page">
+<p-card header="Finance — expenses & salaries">
+  <p class="hint">
+    Record money going out (supplies, rent, utilities) as
+    <strong>Expense</strong>, and staff wages as <strong>Salary</strong>.
+    Patient payments are recorded on each patient’s
+    <strong>Charges & fees</strong> screen.
+  </p>
+  <div class="toolbar">
+    <p-button
+      label="Back to patients"
+      icon="pi pi-users"
+      severity="secondary"
+      [outlined]="true"
+      routerLink="/patients"
+    />
+    <p-button
+      label="Profit & loss sheet"
+      icon="pi pi-chart-line"
+      routerLink="/finance/profit-loss"
+    />
+  </div>
+
+  <h3>New entry</h3>
+  <div class="form-grid">
+    <div>
+      <label class="blk" for="ledger-type">Type</label>
+      <p-select
+        inputId="ledger-type"
+        [options]="[
+          { label: 'Expense', value: OfficeLedgerKind.EXPENSE },
+          { label: 'Salary', value: OfficeLedgerKind.SALARY },
+        ]"
+        [(ngModel)]="formKind"
+        optionLabel="label"
+        optionValue="value"
+        [style]="{ width: '100%' }"
+        styleClass="w-full"
+      />
+    </div>
+    @if (formKind === OfficeLedgerKind.SALARY) {
+      <div>
+        <label class="blk" for="ledger-payee">Employee</label>
+        <p-select
+          inputId="ledger-payee"
+          [options]="payeeOptions()"
+          [(ngModel)]="formPayeeId"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select staff member"
+          [style]="{ width: '100%' }"
+          styleClass="w-full"
+        />
+      </div>
+    }
+    <div>
+      <label class="blk" for="ledger-date">Date</label>
+      <input
+        id="ledger-date"
+        pInputText
+        type="date"
+        [(ngModel)]="formEntryDate"
+        class="w-full"
+      />
+    </div>
+    <div>
+      <label class="blk" for="ledger-amt">Amount</label>
+      <p-inputNumber
+        inputId="ledger-amt"
+        [(ngModel)]="formAmount"
+        mode="decimal"
+        [min]="0.01"
+        [minFractionDigits]="2"
+        [maxFractionDigits]="2"
+        styleClass="w-full"
+        inputStyleClass="w-full"
+      />
+    </div>
+    <div>
+      <label class="blk" for="ledger-desc">Description</label>
+      <textarea
+        id="ledger-desc"
+        pTextarea
+        [(ngModel)]="formDescription"
+        rows="2"
+        class="w-full"
+        placeholder="e.g. Monthly rent, Lab supplies, January payroll…"
+      ></textarea>
+    </div>
+    <p-button
+      label="Save to ledger"
+      icon="pi pi-check"
+      [loading]="saving"
+      (onClick)="submit()"
+    />
+  </div>
+
+  <h3 class="mt">Recent entries</h3>
+  @if (loading()) {
+    <p-progressSpinner strokeWidth="4" />
+  } @else {
+    <p-table [value]="rows()" [tableStyle]="{ 'min-width': '44rem' }">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Payee</th>
+          <th style="text-align: right">Amount</th>
+          <th>Recorded by</th>
+          <th>Logged</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td>{{ row.entryDate }}</td>
+          <td>{{ row.kind }}</td>
+          <td>{{ row.description }}</td>
+          <td>{{ row.payeeName || '—' }}</td>
+          <td style="text-align: right">{{ row.amount }}</td>
+          <td>{{ row.recordedByName || '—' }}</td>
+          <td>{{ row.createdAt | date: 'short' }}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7">No ledger entries yet.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  }
+</p-card>
+</div>

@@ -48,6 +48,16 @@ export class PatientFeeLineEntity {
   @JoinColumn({ name: 'created_by_id' })
   createdByUser!: UserEntity | null;
 
+  @Column({ name: 'paid_at', type: 'timestamptz', nullable: true })
+  paidAt!: Date | null;
+
+  @Column({ name: 'paid_by_id', type: 'uuid', nullable: true })
+  paidById!: string | null;
+
+  @ManyToOne(() => UserEntity, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'paid_by_id' })
+  paidByUser!: UserEntity | null;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt!: Date;
 }

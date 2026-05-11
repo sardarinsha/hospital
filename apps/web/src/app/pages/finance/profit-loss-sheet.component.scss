@@ -1,0 +1,116 @@
+@use '../patients/life-care-slip-shared' as *;
+@use './clinic-finance-chrome' as *;
+
+.pl-card {
+  margin-bottom: 1rem;
+}
+
+.pl-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.pl-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pl-label {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.pl-date {
+  padding: 6px 8px;
+  border: 1px solid rgba(13, 71, 161, 0.35);
+  border-radius: 4px;
+  font: inherit;
+}
+
+.pl-err {
+  margin: 12px 0 0;
+  color: #b00020;
+  font-size: 13px;
+}
+
+.lc-pl-sheet .lc-pl-period-box {
+  border: 1px solid var(--clinic-blue);
+  margin: 10px 0 12px;
+}
+
+.lc-pl-period-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(13, 71, 161, 0.35);
+}
+
+.lc-pl-period-row:last-child {
+  border-bottom: none;
+}
+
+.lc-pl-label {
+  font-weight: 700;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.lc-pl-label::after {
+  content: ':';
+}
+
+.lc-pl-val {
+  font-weight: 700;
+  text-align: right;
+}
+
+.lc-pl-doc-title {
+  margin: 6px 0 14px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  color: var(--clinic-maroon);
+}
+
+.lc-pl-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.lc-pl-table td {
+  padding: 7px 8px;
+  border-bottom: 1px solid rgba(13, 71, 161, 0.2);
+}
+
+.lc-pl-table td:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  width: 28%;
+}
+
+.lc-pl-subnote td {
+  font-size: 9.5px;
+  font-style: italic;
+  color: #333;
+  padding-top: 4px;
+  padding-bottom: 8px;
+}
+
+.lc-pl-net td {
+  font-weight: 800;
+  font-size: 12px;
+  border-top: 2px solid var(--clinic-blue);
+  border-bottom: 2px solid var(--clinic-maroon);
+  padding-top: 10px;
+  padding-bottom: 10px;
+}

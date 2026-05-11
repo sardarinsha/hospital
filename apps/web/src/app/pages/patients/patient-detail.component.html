@@ -24,6 +24,14 @@
           (onClick)="printFeesPos()"
         />
       }
+      @if (auth.hasPermission(Permission.PATIENT_EDIT_ALL)) {
+        <p-button
+          label="Edit details"
+          icon="pi pi-pencil"
+          severity="secondary"
+          [routerLink]="['/patients', p.id, 'edit']"
+        />
+      }
       <p-button
         label="Back to list"
         icon="pi pi-arrow-left"
@@ -181,7 +189,15 @@
           icon="pi pi-plus"
           (onClick)="openAddFee()"
         />
-        <span class="fee-total">Total: <strong>{{ feeTotal() }}</strong></span>
+        <span class="fee-total"
+          >Total: <strong>{{ feeTotal() }}</strong></span
+        >
+        <span class="fee-total fee-due"
+          >Balance due: <strong>{{ feeBalanceDue() }}</strong></span
+        >
+        <span class="fee-total fee-paid"
+          >Collected: <strong>{{ feePaidTotal() }}</strong></span
+        >
       </div>
     } @else {
       <p class="fee-readonly-hint">
@@ -189,6 +205,12 @@
       </p>
       <div class="fee-toolbar fee-toolbar-readonly">
         <span class="fee-total">Total: <strong>{{ feeTotal() }}</strong></span>
+        <span class="fee-total fee-due"
+          >Balance due: <strong>{{ feeBalanceDue() }}</strong></span
+        >
+        <span class="fee-total fee-paid"
+          >Collected: <strong>{{ feePaidTotal() }}</strong></span
+        >
       </div>
     }
     <p-table [value]="feeLines()" [tableStyle]="{ 'min-width': '36rem' }">
@@ -198,9 +220,10 @@
           <th>Qty</th>
           <th>Unit</th>
           <th>Line total</th>
+          <th>Payment</th>
           <th>By</th>
           @if (auth.hasPermission(Permission.FEE_LINE_MANAGE)) {
-            <th style="width: 16rem">Actions</th>
+            <th style="width: 20rem">Actions</th>
           }
         </tr>
       </ng-template>
@@ -210,9 +233,35 @@
           <td>{{ row.quantity }}</td>
           <td>{{ row.unitPrice }}</td>
           <td>{{ row.lineTotal }}</td>
+          <td>
+            @if (row.paidAt) {
+              <p-tag severity="success" value="Paid" />
+              <span class="fee-paid-meta">{{ row.paidAt | date: 'short' }}</span>
+            } @else {
+              <p-tag severity="warn" value="Due" />
+            }
+          </td>
           <td>{{ row.createdByName || '—' }}</td>
           @if (auth.hasPermission(Permission.FEE_LINE_MANAGE)) {
             <td class="fee-actions">
+              @if (!row.paidAt) {
+                <p-button
+                  label="Receive payment"
+                  icon="pi pi-dollar"
+                  [text]="true"
+                  (onClick)="receiveFeePayment(row)"
+                  ariaLabel="Receive payment"
+                />
+              } @else {
+                <p-button
+                  label="Undo payment"
+                  icon="pi pi-undo"
+                  [text]="true"
+                  severity="secondary"
+                  (onClick)="voidFeePayment(row)"
+                  ariaLabel="Undo payment"
+                />
+              }
               <p-button
                 label="Print"
                 icon="pi pi-print"
@@ -241,7 +290,7 @@
       </ng-template>
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td [attr.colspan]="auth.hasPermission(Permission.FEE_LINE_MANAGE) ? 6 : 5">
+          <td [attr.colspan]="auth.hasPermission(Permission.FEE_LINE_MANAGE) ? 7 : 6">
             @if (auth.hasPermission(Permission.FEE_LINE_MANAGE)) {
               No charges yet. Use “Add charge”.
             } @else {
@@ -275,8 +324,9 @@
       />
     </div>
     @if (addMode === 'catalog') {
-      <label class="blk">Service</label>
+      <label class="blk" for="add-fee-catalog-svc">Service</label>
       <p-select
+        inputId="add-fee-catalog-svc"
         [options]="catalogSelectOptions()"
         [(ngModel)]="selCatalogId"
         optionLabel="label"

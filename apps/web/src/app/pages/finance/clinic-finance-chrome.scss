@@ -1,0 +1,22 @@
+/**
+ * On-screen finance pages — matches Life Care letterhead tokens (:root).
+ */
+.clinic-finance-page :deep(.p-card) {
+  border-top: 4px solid var(--clinic-blue);
+  box-shadow: 0 2px 12px rgba(13, 71, 161, 0.1);
+}
+
+.clinic-finance-page :deep(.p-card-title),
+.clinic-finance-page :deep(.p-card-header) {
+  color: var(--clinic-maroon);
+  font-weight: 700;
+}
+
+.clinic-finance-page .hint strong {
+  color: var(--clinic-blue);
+}
+
+.clinic-finance-page h3 {
+  color: var(--clinic-maroon);
+  font-weight: 700;
+}

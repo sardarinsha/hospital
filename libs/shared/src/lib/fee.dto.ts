@@ -18,6 +18,9 @@ export interface PatientFeeLine {
   createdById: string;
   createdByName?: string;
   createdAt: string;
+  /** When reception recorded payment for this line (ISO timestamp). */
+  paidAt?: string | null;
+  paidByName?: string | null;
 }
 
 export interface CreateFeeCatalogItemDto {

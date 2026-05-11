@@ -18,3 +18,9 @@ export interface DoctorSummary {
   medicalField: string;
   createdAt: string;
 }
+
+/** Admin updates doctor display name and/or medical field (login email unchanged here). */
+export interface UpdateDoctorRequest {
+  name?: string;
+  medicalField?: string;
+}

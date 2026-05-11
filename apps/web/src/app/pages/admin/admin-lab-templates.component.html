@@ -65,8 +65,9 @@
 >
   @if (editing; as e) {
     <p class="dlg-title">{{ e.title }}</p>
-    <label class="blk">Fee catalog item</label>
+    <label class="blk" for="link-fee-catalog">Fee catalog item</label>
     <p-select
+      inputId="link-fee-catalog"
       [options]="catalogOptions()"
       [(ngModel)]="selCatalogId"
       optionLabel="label"

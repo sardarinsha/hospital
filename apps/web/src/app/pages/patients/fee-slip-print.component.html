@@ -23,36 +23,24 @@
   >
     @if (layoutMode() === 'a4') {
       <header class="lc-top">
-        <div class="lc-brand-row">
-          <div class="lc-en-title">THE LIFE CARE MEDICAL CENTER</div>
+        <div class="lc-sheet-top-rule"></div>
+        <div class="lc-sheet-brand-row-ref">
           <div class="lc-logo-wrap">
             <img
               class="lc-logo-img"
               src="/assets/life-care-logo.jpeg"
-              alt="THE LIFE CARE"
+              alt=""
             />
           </div>
-          <div class="lc-ur-title" dir="rtl">دی لائف کیئر میڈیکل سینٹر</div>
-        </div>
-        <div class="lc-black-bar">
-          Opposite Pin School Main Makhad Road Jand, District Attock
-          &nbsp;·&nbsp; 0345-0000000
-        </div>
-        <div class="lc-pills">
-          <span class="lc-pill" dir="rtl">لیباریٹری</span>
-          <span class="lc-pill" dir="rtl">ایکس رے</span>
-          <span class="lc-pill" dir="rtl">الٹراساؤنڈ</span>
-          <span class="lc-pill" dir="rtl">ای سی جی</span>
-          <span class="lc-pill" dir="rtl">ایکو کارڈیوگرافی</span>
-        </div>
-        <div class="lc-banner-row">
-          <div class="lc-badge-24">
-            <span class="lc-24-ring">24</span>
-            <span class="lc-24-text">HOUR<br />SERVICE</span>
+          <div class="lc-sheet-title-block">
+            <span class="lc-sheet-the">{{ clinic.titleThe }}</span>
+            <div class="lc-sheet-headline">
+              <span class="lc-sheet-life-care">{{ clinic.titleLifeCare }}</span>
+              <span class="lc-sheet-medical-center">{{
+                clinic.titleMedicalCenter
+              }}</span>
+            </div>
           </div>
-          <p class="lc-ur-banner" dir="rtl">
-            ڈاکٹروں کی نگرانی میں چوبیس گھنٹے کی سروس
-          </p>
         </div>
       </header>
       <h2 class="lc-fee-slip-title">
@@ -60,67 +48,107 @@
       </h2>
     } @else {
       <header class="fee-pos-head">
-        <div class="fee-pos-clinic">THE LIFE CARE MEDICAL CENTER</div>
-        <div class="fee-pos-tag">
-          {{ isSingleChargeSlip() ? 'SINGLE CHARGE RECEIPT' : 'CHARGES RECEIPT' }}
+        <div class="fee-pos-clinic">
+          <span class="fee-pos-the">{{ clinic.titleThe }}</span>
+          <span class="fee-pos-title-blue">{{ clinic.titleLifeCare }}</span>
+          <span class="fee-pos-title-maroon">{{
+            clinic.titleMedicalCenter
+          }}</span>
         </div>
-        <div class="fee-pos-addr">Jand, Attock · 0345-0000000</div>
+        <div class="fee-pos-tag">
+          {{
+            isSingleChargeSlip()
+              ? 'SINGLE CHARGE RECEIPT'
+              : 'CHARGES RECEIPT'
+          }}
+        </div>
+        <div class="fee-pos-addr">{{ clinic.phoneDisplay }}</div>
       </header>
     }
 
-    <section class="lc-patient-block" [class.fee-pos-patient]="layoutMode() === 'pos'">
-      <div class="lc-ref-date" [class.fee-pos-row]="layoutMode() === 'pos'">
-        <div class="lc-field-inline">
-          <span class="lc-label">Ref#</span>
-          <span class="lc-line lc-line-fill">{{ p.mrn }}</span>
+    @if (layoutMode() === 'a4') {
+      <section class="lc-patient-block lc-patient-grid-box">
+        <div class="lc-grid-cell">
+          <span class="lc-grid-label">Patient name</span>
+          <span class="lc-grid-value">{{ patientFullName(p) }}</span>
         </div>
-        <div class="lc-field-inline lc-field-right">
-          <span class="lc-label">Date</span>
-          <span class="lc-line lc-line-fill">{{
+        <div class="lc-grid-cell">
+          <span class="lc-grid-label">Date</span>
+          <span class="lc-grid-value">{{
             printedAt() | date: dateFormatForPrint()
           }}</span>
         </div>
-      </div>
-      <div class="lc-field-row">
-        <span class="lc-label">Patient</span>
-        <span class="lc-line lc-line-fill lc-line-long">{{
-          patientFullName(p)
-        }}</span>
+        <div class="lc-grid-cell">
+          <span class="lc-grid-label">Referred by</span>
+          <span class="lc-grid-value">{{ referredByLine(p) }}</span>
+        </div>
+        <div class="lc-grid-cell">
+          <span class="lc-grid-label">Patient ID #</span>
+          <span class="lc-grid-value">{{ p.mrn }}</span>
+        </div>
+      </section>
+      <div class="lc-field-row lc-age-gender">
+        <div class="lc-field-inline">
+          <span class="lc-label">Age</span>
+          <span class="lc-line lc-line-fill lc-line-short">{{ p.age }}</span>
+        </div>
+        <div class="lc-gender-block">
+          <span class="lc-label">Gender</span>
+          <span
+            class="lc-gm"
+            [class.lc-gm-on]="p.gender === Gender.FEMALE"
+            >F</span
+          >
+          <span class="lc-gm-sep">/</span>
+          <span class="lc-gm" [class.lc-gm-on]="p.gender === Gender.MALE"
+            >M</span
+          >
+          @if (p.gender === Gender.OTHER) {
+            <span class="lc-gm lc-gm-on"> / O</span>
+          }
+        </div>
       </div>
       @if (isSingleChargeSlip() && selectedLine(); as line) {
         <div class="lc-field-row">
           <span class="lc-label">Charge</span>
-          <span class="lc-line lc-line-fill lc-line-long">{{ line.description }}</span>
+          <span class="lc-line lc-line-fill lc-line-long">{{
+            line.description
+          }}</span>
         </div>
       }
-      @if (layoutMode() === 'a4') {
-        <div class="lc-field-row lc-age-gender">
+    } @else {
+      <section class="lc-patient-block fee-pos-patient">
+        <div class="lc-ref-date fee-pos-row">
           <div class="lc-field-inline">
-            <span class="lc-label">Age</span>
-            <span class="lc-line lc-line-fill lc-line-short">{{ p.age }}</span>
+            <span class="lc-label">Ref#</span>
+            <span class="lc-line lc-line-fill">{{ p.mrn }}</span>
           </div>
-          <div class="lc-gender-block">
-            <span class="lc-label">Gender</span>
-            <span
-              class="lc-gm"
-              [class.lc-gm-on]="p.gender === Gender.FEMALE"
-              >F</span
-            >
-            <span class="lc-gm-sep">/</span>
-            <span class="lc-gm" [class.lc-gm-on]="p.gender === Gender.MALE"
-              >M</span
-            >
-            @if (p.gender === Gender.OTHER) {
-              <span class="lc-gm lc-gm-on"> / O</span>
-            }
+          <div class="lc-field-inline lc-field-right">
+            <span class="lc-label">Date</span>
+            <span class="lc-line lc-line-fill">{{
+              printedAt() | date: dateFormatForPrint()
+            }}</span>
           </div>
         </div>
-      } @else {
+        <div class="lc-field-row">
+          <span class="lc-label">Patient</span>
+          <span class="lc-line lc-line-fill lc-line-long">{{
+            patientFullName(p)
+          }}</span>
+        </div>
+        @if (isSingleChargeSlip() && selectedLine(); as line) {
+          <div class="lc-field-row">
+            <span class="lc-label">Charge</span>
+            <span class="lc-line lc-line-fill lc-line-long">{{
+              line.description
+            }}</span>
+          </div>
+        }
         <div class="fee-pos-meta">
           Age {{ p.age }} · {{ p.gender }}
         </div>
-      }
-    </section>
+      </section>
+    }
 
     <div class="lc-rule" [class.fee-pos-rule]="layoutMode() === 'pos'"></div>
 
@@ -160,9 +188,26 @@
 
     @if (layoutMode() === 'a4') {
       <p class="lc-fee-disclaimer">Not valid for court.</p>
-      <p class="lc-fee-footer-ur" dir="rtl">
-        مکھد روڈ جند، ضلع اٹک — 0345-0000000
-      </p>
+      <p class="lc-fee-footer-ur" dir="rtl">{{ clinic.rxFooterUr }}</p>
+      <footer class="lc-sheet-clinic-footer">
+        <div class="lc-footer-blue-bar">
+          <div class="lc-footer-address-col">
+            <span class="lc-sheet-pin" aria-hidden="true">📍</span>
+            {{ clinic.address }}
+          </div>
+          <div class="lc-footer-phone-cluster">
+            <span class="lc-footer-rule" aria-hidden="true"></span>
+            <span class="lc-footer-phone">{{ clinic.phoneDisplay }}</span>
+            <span class="lc-footer-rule" aria-hidden="true"></span>
+          </div>
+          <div class="lc-footer-badge-wrap">
+            <div class="lc-badge-24 lc-badge-24--footer" aria-hidden="true">
+              <span class="lc-24-ring">24</span>
+              <span class="lc-24-text">HOUR<br />SERVICE</span>
+            </div>
+          </div>
+        </div>
+      </footer>
     } @else {
       <p class="fee-pos-disclaimer">Not valid for court.</p>
     }

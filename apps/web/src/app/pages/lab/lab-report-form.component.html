@@ -27,7 +27,7 @@
       }
 
       @for (f of fields(); track f.key) {
-        <label class="blk lr-field-label">{{ f.label }}</label>
+        <label class="blk lr-field-label" [attr.for]="f.key">{{ f.label }}</label>
         @if (f.type === 'richtext') {
           <ckeditor
             [editor]="Editor"

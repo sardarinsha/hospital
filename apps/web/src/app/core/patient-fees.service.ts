@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
   CreatePatientFeeLineDto,
   PatientFeeLine,
@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class PatientFeesService {
-  constructor(private readonly http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   list(patientId: string): Observable<PatientFeeLine[]> {
     return this.http.get<PatientFeeLine[]>(`/api/patients/${patientId}/fees`);
@@ -39,6 +39,25 @@ export class PatientFeesService {
   remove(patientId: string, lineId: string): Observable<void> {
     return this.http.delete<void>(
       `/api/patients/${patientId}/fees/${lineId}`,
+    );
+  }
+
+  recordPayment(
+    patientId: string,
+    lineId: string,
+  ): Observable<PatientFeeLine> {
+    return this.http.post<PatientFeeLine>(
+      `/api/patients/${patientId}/fees/${lineId}/payment`,
+      {},
+    );
+  }
+
+  voidPayment(
+    patientId: string,
+    lineId: string,
+  ): Observable<PatientFeeLine> {
+    return this.http.delete<PatientFeeLine>(
+      `/api/patients/${patientId}/fees/${lineId}/payment`,
     );
   }
 }

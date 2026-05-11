@@ -47,6 +47,8 @@ export class PatientFeesService {
       createdById: row.createdById ?? '',
       createdByName,
       createdAt: row.createdAt.toISOString(),
+      paidAt: row.paidAt ? row.paidAt.toISOString() : null,
+      paidByName: row.paidByUser?.name ?? null,
     };
   }
 
@@ -60,7 +62,7 @@ export class PatientFeesService {
     await this.ensurePatient(patientId);
     const rows = await this.linesRepo.find({
       where: { patientId },
-      relations: { createdByUser: true },
+      relations: { createdByUser: true, paidByUser: true },
       order: { createdAt: 'DESC' },
     });
     return rows.map((r) =>
@@ -109,7 +111,7 @@ export class PatientFeesService {
     const saved = await this.linesRepo.save(row);
     const withUser = await this.linesRepo.findOne({
       where: { id: saved.id },
-      relations: { createdByUser: true },
+      relations: { createdByUser: true, paidByUser: true },
     });
     return this.toDto(
       withUser!,
@@ -125,7 +127,7 @@ export class PatientFeesService {
     await this.ensurePatient(patientId);
     const line = await this.linesRepo.findOne({
       where: { id: lineId, patientId },
-      relations: { createdByUser: true },
+      relations: { createdByUser: true, paidByUser: true },
     });
     if (!line) throw new NotFoundException('Fee line not found');
     if (
@@ -148,7 +150,7 @@ export class PatientFeesService {
     await this.linesRepo.save(line);
     const reloaded = await this.linesRepo.findOne({
       where: { id: lineId },
-      relations: { createdByUser: true },
+      relations: { createdByUser: true, paidByUser: true },
     });
     return this.toDto(
       reloaded!,
@@ -160,6 +162,37 @@ export class PatientFeesService {
     await this.ensurePatient(patientId);
     const res = await this.linesRepo.delete({ id: lineId, patientId });
     if (!res.affected) throw new NotFoundException('Fee line not found');
+  }
+
+  /** Mark a charge as paid at the desk (or clear payment). */
+  async setLinePaid(
+    patientId: string,
+    lineId: string,
+    paid: boolean,
+    actorUserId: string,
+  ): Promise<PatientFeeLine> {
+    await this.ensurePatient(patientId);
+    const line = await this.linesRepo.findOne({
+      where: { id: lineId, patientId },
+      relations: { createdByUser: true, paidByUser: true },
+    });
+    if (!line) throw new NotFoundException('Fee line not found');
+    if (paid) {
+      line.paidAt = new Date();
+      line.paidById = actorUserId;
+    } else {
+      line.paidAt = null;
+      line.paidById = null;
+    }
+    await this.linesRepo.save(line);
+    const reloaded = await this.linesRepo.findOne({
+      where: { id: lineId },
+      relations: { createdByUser: true, paidByUser: true },
+    });
+    return this.toDto(
+      reloaded!,
+      reloaded!.createdByUser?.name ?? undefined,
+    );
   }
 
   async totalForPatient(patientId: string): Promise<string> {

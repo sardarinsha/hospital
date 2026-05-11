@@ -1,5 +1,12 @@
 @use 'primeicons/primeicons.css';
 
+/* Life Care letterhead — shared by print slips and finance screens */
+:root {
+  --clinic-blue: #0d47a1;
+  --clinic-maroon: #7b1f32;
+  --clinic-blue-dark: #0a3a82;
+}
+
 html,
 body {
   height: 100%;

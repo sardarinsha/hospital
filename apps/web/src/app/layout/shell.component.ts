@@ -64,6 +64,24 @@ export class ShellComponent implements OnInit {
         routerLink: ['/patients/new'],
       });
     }
+    if (this.auth.hasPermission(Permission.FINANCE_LEDGER)) {
+      items.push({
+        label: 'Finance',
+        icon: 'pi pi-wallet',
+        items: [
+          {
+            label: 'Ledger',
+            icon: 'pi pi-list',
+            routerLink: ['/finance/ledger'],
+          },
+          {
+            label: 'Profit & loss',
+            icon: 'pi pi-chart-line',
+            routerLink: ['/finance/profit-loss'],
+          },
+        ],
+      });
+    }
     if (
       u?.role === Role.LAB_TECH ||
       u?.role === Role.ADMIN ||
@@ -99,6 +117,11 @@ export class ShellComponent implements OnInit {
             label: 'Lab report templates',
             icon: 'pi pi-link',
             routerLink: ['/admin/lab-report-templates'],
+          },
+          {
+            label: 'Data backup',
+            icon: 'pi pi-download',
+            routerLink: ['/admin/backup'],
           },
         ],
       });

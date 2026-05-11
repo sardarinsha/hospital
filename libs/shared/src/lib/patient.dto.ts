@@ -44,6 +44,9 @@ export interface CreatePatientDto {
   notes?: string;
 }
 
+/** Partial update for patient demographics and appointment doctor. */
+export type UpdatePatientDto = Partial<CreatePatientDto>;
+
 export interface PatientRegisteredBySummary {
   id: string;
   name: string;

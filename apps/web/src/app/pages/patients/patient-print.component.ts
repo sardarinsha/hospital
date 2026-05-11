@@ -6,6 +6,7 @@ import { Gender, Patient } from '@hospital/shared';
 import { Button } from 'primeng/button';
 import { PatientsService } from '../../core/patients.service';
 import { APP_BRANDING } from '../../core/branding';
+import { CLINIC_PRINT } from '../../core/clinic-print.constants';
 
 @Component({
   selector: 'app-patient-print',
@@ -25,6 +26,7 @@ export class PatientPrintComponent implements OnInit, OnDestroy {
 
   readonly Gender = Gender;
   readonly branding = APP_BRANDING;
+  readonly clinic = CLINIC_PRINT;
 
   ngOnInit(): void {
     this.previousTitle = this.title.getTitle();
@@ -48,6 +50,10 @@ export class PatientPrintComponent implements OnInit, OnDestroy {
 
   patientFullName(p: Patient): string {
     return `${p.firstName} ${p.lastName}`.trim();
+  }
+
+  referredByLine(p: Patient): string {
+    return p.appointmentDoctor?.name?.trim() ?? '';
   }
 
   back(): void {

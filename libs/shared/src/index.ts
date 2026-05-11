@@ -7,3 +7,5 @@ export * from './lib/dashboard.dto';
 export * from './lib/lab-report.dto';
 export * from './lib/admin-user.dto';
 export * from './lib/doctor.dto';
+export * from './lib/office-ledger.dto';
+export * from './lib/profit-loss.dto';

@@ -77,13 +77,17 @@ export class PatientsController {
     return this.patientsService.findOne(id);
   }
 
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.RECEPTIONIST)
   @Patch(':id')
   update(
+    @Req() req: Request & { user: RequestUser },
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() body: UpdatePatientBodyDto,
   ) {
-    return this.patientsService.update(id, body);
+    return this.patientsService.update(id, body, {
+      role: req.user.role,
+      userId: req.user.id,
+    });
   }
 
   @Roles(Role.ADMIN)

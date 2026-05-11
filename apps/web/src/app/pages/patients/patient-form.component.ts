@@ -4,12 +4,13 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   BloodGroup,
   CreatePatientDto,
   Gender,
   PatientDoctorOption,
+  UpdatePatientDto,
 } from '@hospital/shared';
 import { Button } from 'primeng/button';
 import { Card } from 'primeng/card';
@@ -40,11 +41,14 @@ export class PatientFormComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly patientsApi = inject(PatientsService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly messages = inject(MessageService);
 
   readonly genders = Object.values(Gender);
   readonly bloodGroups = Object.values(BloodGroup);
   readonly doctorOptions = signal<PatientDoctorOption[]>([]);
+  readonly editPatientId = signal<string | null>(null);
+  readonly pageTitle = signal('Register patient');
 
   readonly form = this.fb.group({
     firstName: ['', Validators.required],
@@ -64,6 +68,34 @@ export class PatientFormComponent implements OnInit {
   saving = false;
 
   ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (this.router.url.endsWith('/edit') && id) {
+      this.editPatientId.set(id);
+      this.pageTitle.set('Edit patient');
+      this.patientsApi.get(id).subscribe({
+        next: (p) => {
+          this.form.patchValue({
+            firstName: p.firstName,
+            lastName: p.lastName,
+            gender: p.gender,
+            age: p.age,
+            appointmentDoctorId: p.appointmentDoctor?.userId ?? '',
+            phone: p.phone ?? '',
+            address: p.address ?? '',
+            bloodGroup: p.bloodGroup ?? '',
+            notes: p.notes ?? '',
+          });
+        },
+        error: () => {
+          this.messages.add({
+            severity: 'error',
+            summary: 'Patient not found',
+          });
+          void this.router.navigate(['/patients']);
+        },
+      });
+    }
+
     this.patientsApi.doctorOptions().subscribe({
       next: (opts) => this.doctorOptions.set(opts),
       error: () => this.doctorOptions.set([]),
@@ -71,7 +103,12 @@ export class PatientFormComponent implements OnInit {
   }
 
   cancel(): void {
-    void this.router.navigate(['/patients']);
+    const eid = this.editPatientId();
+    if (eid) {
+      void this.router.navigate(['/patients', eid]);
+    } else {
+      void this.router.navigate(['/patients']);
+    }
   }
 
   submit(): void {
@@ -81,7 +118,8 @@ export class PatientFormComponent implements OnInit {
       this.messages.add({
         severity: 'warn',
         summary: 'No doctors available',
-        detail: 'Register doctors under Admin → Doctors before registering patients.',
+        detail:
+          'Register doctors under Admin → Doctors before saving patient details.',
       });
       return;
     }
@@ -95,36 +133,68 @@ export class PatientFormComponent implements OnInit {
       });
       return;
     }
-    const bloodRaw = raw.bloodGroup?.trim();
+    const firstName = raw.firstName?.trim() ?? '';
+    const lastName = raw.lastName?.trim() ?? '';
+    const gender = raw.gender;
+    const appointmentDoctorId = raw.appointmentDoctorId?.trim() ?? '';
+    if (!firstName || !lastName || !gender || !appointmentDoctorId) {
+      this.messages.add({
+        severity: 'warn',
+        summary: 'Missing fields',
+        detail: 'Fill all required fields.',
+      });
+      return;
+    }
+    const bloodRaw = String(raw.bloodGroup ?? '').trim();
     const blood =
       bloodRaw && bloodRaw.length > 0
         ? (bloodRaw as BloodGroup)
         : undefined;
     const body: CreatePatientDto = {
-      firstName: raw.firstName!,
-      lastName: raw.lastName!,
-      gender: raw.gender!,
+      firstName,
+      lastName,
+      gender,
       age: ageNum,
-      appointmentDoctorId: raw.appointmentDoctorId!,
+      appointmentDoctorId,
       phone: raw.phone || undefined,
       address: raw.address || undefined,
       bloodGroup: blood,
       notes: raw.notes || undefined,
     };
+
+    const editId = this.editPatientId();
     this.saving = true;
-    this.patientsApi.create(body).subscribe({
-      next: (p) => {
-        this.saving = false;
-        void this.router.navigate(['/patients', p.id]);
-      },
-      error: () => {
-        this.saving = false;
-        this.messages.add({
-          severity: 'error',
-          summary: 'Could not register patient',
-          detail: 'Check required fields and try again.',
-        });
-      },
-    });
+    if (editId) {
+      const patch: UpdatePatientDto = body;
+      this.patientsApi.update(editId, patch).subscribe({
+        next: (p) => {
+          this.saving = false;
+          void this.router.navigate(['/patients', p.id]);
+        },
+        error: () => {
+          this.saving = false;
+          this.messages.add({
+            severity: 'error',
+            summary: 'Could not update patient',
+            detail: 'Check permissions (only the registering receptionist can edit their patients) and try again.',
+          });
+        },
+      });
+    } else {
+      this.patientsApi.create(body).subscribe({
+        next: (p) => {
+          this.saving = false;
+          void this.router.navigate(['/patients', p.id]);
+        },
+        error: () => {
+          this.saving = false;
+          this.messages.add({
+            severity: 'error',
+            summary: 'Could not register patient',
+            detail: 'Check required fields and try again.',
+          });
+        },
+      });
+    }
   }
 }

@@ -48,7 +48,7 @@ export class AdminLabTemplatesComponent implements OnInit {
     this.reload();
     this.feeApi.listAllAdmin().subscribe({
       next: (c) => this.catalog.set(c),
-      error: () => {},
+      error: () => this.catalog.set([]),
     });
   }
 

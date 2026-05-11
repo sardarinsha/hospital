@@ -1,5 +1,5 @@
 <p-toast />
-<p-card header="Register patient">
+<p-card [header]="pageTitle()">
   @if (doctorOptions().length === 0) {
     <p-message
       severity="warn"
@@ -82,7 +82,7 @@
     <div class="col full actions">
       <p-button
         type="submit"
-        label="Save patient"
+        [label]="editPatientId() ? 'Save changes' : 'Save patient'"
         icon="pi pi-check"
         [loading]="saving"
         [disabled]="doctorOptions().length === 0"

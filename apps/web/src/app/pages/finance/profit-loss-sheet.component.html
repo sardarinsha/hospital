@@ -1,0 +1,136 @@
+<div class="clinic-finance-page">
+<div class="no-print toolbar">
+  <p-button
+    label="Print"
+    icon="pi pi-print"
+    (onClick)="triggerPrint()"
+    [disabled]="!report()"
+  />
+  <p-button
+    label="Refresh"
+    icon="pi pi-refresh"
+    (onClick)="load()"
+    [loading]="loading()"
+  />
+  <p-button
+    label="Back to ledger"
+    icon="pi pi-arrow-left"
+    severity="secondary"
+    (onClick)="back()"
+  />
+</div>
+
+<p-card header="Profit & loss — date range" class="no-print pl-card">
+  <div class="pl-controls">
+    <label class="pl-field">
+      <span class="pl-label">From</span>
+      <input type="date" [(ngModel)]="fromStr" class="pl-date" />
+    </label>
+    <label class="pl-field">
+      <span class="pl-label">To</span>
+      <input type="date" [(ngModel)]="toStr" class="pl-date" />
+    </label>
+    <p-button label="Load report" icon="pi pi-search" (onClick)="load()" />
+  </div>
+  @if (error(); as msg) {
+    <p class="pl-err">{{ msg }}</p>
+  }
+</p-card>
+
+@if (report(); as r) {
+  <div class="print-area life-care-slip lc-pl-sheet">
+    <header class="lc-top">
+      <div class="lc-sheet-top-rule"></div>
+      <div class="lc-sheet-brand-row-ref">
+        <div class="lc-logo-wrap">
+          <img class="lc-logo-img" src="/assets/life-care-logo.jpeg" alt="" />
+        </div>
+        <div class="lc-sheet-title-block">
+          <span class="lc-sheet-the">{{ clinic.titleThe }}</span>
+          <div class="lc-sheet-headline">
+            <span class="lc-sheet-life-care">{{ clinic.titleLifeCare }}</span>
+            <span class="lc-sheet-medical-center">{{
+              clinic.titleMedicalCenter
+            }}</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="lc-pl-period-box">
+      <div class="lc-pl-period-row">
+        <span class="lc-pl-label">Period from</span>
+        <span class="lc-pl-val">{{ r.from }}</span>
+      </div>
+      <div class="lc-pl-period-row">
+        <span class="lc-pl-label">Period to</span>
+        <span class="lc-pl-val">{{ r.to }}</span>
+      </div>
+      <div class="lc-pl-period-row">
+        <span class="lc-pl-label">Generated</span>
+        <span class="lc-pl-val">{{ r.generatedAt | date: 'medium' }}</span>
+      </div>
+    </section>
+
+    <h1 class="lc-pl-doc-title">PROFIT &amp; LOSS</h1>
+
+    <table class="lc-pl-table">
+      <tbody>
+        <tr>
+          <td>Income (collections in period)</td>
+          <td>{{ parseAmt(r.incomeCollected) | number: '1.2-2' }}</td>
+        </tr>
+        <tr class="lc-pl-subnote">
+          <td colspan="2">
+            Charges posted in period (informational):
+            {{ parseAmt(r.chargesPostedInPeriod) | number: '1.2-2' }}
+          </td>
+        </tr>
+        <tr>
+          <td>Office expenses</td>
+          <td>{{ parseAmt(r.expenseLedgerTotal) | number: '1.2-2' }}</td>
+        </tr>
+        <tr>
+          <td>Salaries</td>
+          <td>{{ parseAmt(r.salaryLedgerTotal) | number: '1.2-2' }}</td>
+        </tr>
+        <tr>
+          <td>Total outflows</td>
+          <td>{{ parseAmt(r.totalOutflows) | number: '1.2-2' }}</td>
+        </tr>
+        <tr class="lc-pl-net">
+          <td>Net income</td>
+          <td>{{ parseAmt(r.netIncome) | number: '1.2-2' }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="lc-main-grow"></div>
+
+    <footer class="lc-sheet-clinic-footer">
+      <div class="lc-footer-blue-bar">
+        <div class="lc-footer-address-col">
+          <span class="lc-sheet-pin" aria-hidden="true">📍</span>
+          {{ clinic.address }}
+        </div>
+        <div class="lc-footer-phone-cluster">
+          <span class="lc-footer-rule" aria-hidden="true"></span>
+          <span class="lc-footer-phone">{{ clinic.phoneDisplay }}</span>
+          <span class="lc-footer-rule" aria-hidden="true"></span>
+        </div>
+        <div class="lc-footer-badge-wrap">
+          <div class="lc-badge-24 lc-badge-24--footer" aria-hidden="true">
+            <span class="lc-24-ring">24</span>
+            <span class="lc-24-text">HOUR<br />SERVICE</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <p class="lc-system-footer">
+      {{ branding.productShortName }} — {{ branding.designedByLine }} ·
+      {{ branding.companyWebsiteDisplay }} · {{ branding.supportPhoneDisplay }}
+    </p>
+  </div>
+}
+</div>

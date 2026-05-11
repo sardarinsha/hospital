@@ -1,16 +1,17 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
   CreatePatientDto,
   PaginatedPatients,
   Patient,
   PatientDoctorOption,
+  UpdatePatientDto,
 } from '@hospital/shared';
 import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class PatientsService {
-  constructor(private readonly http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   list(params: {
     search?: string;
@@ -37,6 +38,10 @@ export class PatientsService {
 
   create(body: CreatePatientDto): Observable<Patient> {
     return this.http.post<Patient>('/api/patients', body);
+  }
+
+  update(id: string, body: UpdatePatientDto): Observable<Patient> {
+    return this.http.patch<Patient>(`/api/patients/${id}`, body);
   }
 
   delete(id: string): Observable<void> {

@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
@@ -137,5 +138,61 @@ export class DoctorsService {
     if (!ok) {
       throw new BadRequestException('Selected doctor is invalid');
     }
+  }
+
+  async update(
+    doctorProfileId: string,
+    patch: { name?: string; medicalField?: string },
+  ): Promise<{
+    id: string;
+    userId: string;
+    email: string;
+    name: string;
+    role: Role;
+    medicalField: string;
+    createdAt: Date;
+  }> {
+    if (patch.name === undefined && patch.medicalField === undefined) {
+      throw new BadRequestException('Provide name and/or medicalField');
+    }
+    const row = await this.doctorsRepo.findOne({
+      where: { id: doctorProfileId },
+      relations: ['user'],
+    });
+    if (!row) throw new NotFoundException('Doctor not found');
+    if (patch.medicalField !== undefined) {
+      row.medicalField = patch.medicalField.trim();
+    }
+    if (patch.name !== undefined) {
+      row.user.name = patch.name.trim();
+      await this.usersRepo.save(row.user);
+    }
+    await this.doctorsRepo.save(row);
+    const reloaded = await this.doctorsRepo.findOne({
+      where: { id: doctorProfileId },
+      relations: ['user'],
+    });
+    const d = reloaded!;
+    return {
+      id: d.id,
+      userId: d.userId,
+      email: d.user.email,
+      name: d.user.name,
+      role: d.user.role,
+      medicalField: d.medicalField,
+      createdAt: d.createdAt,
+    };
+  }
+
+  async remove(doctorProfileId: string): Promise<void> {
+    const row = await this.doctorsRepo.findOne({
+      where: { id: doctorProfileId },
+    });
+    if (!row) throw new NotFoundException('Doctor not found');
+    const userId = row.userId;
+    await this.dataSource.transaction(async (manager) => {
+      await manager.getRepository(DoctorEntity).delete({ id: doctorProfileId });
+      await manager.getRepository(UserEntity).delete({ id: userId });
+    });
   }
 }

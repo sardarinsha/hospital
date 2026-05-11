@@ -121,6 +121,15 @@ export const appRoutes: Route[] = [
         data: { roles: [Role.ADMIN, Role.RECEPTIONIST] },
       },
       {
+        path: 'patients/:id/edit',
+        loadComponent: () =>
+          import('./pages/patients/patient-form.component').then(
+            (m) => m.PatientFormComponent,
+          ),
+        canActivate: [roleGuard],
+        data: { roles: [Role.ADMIN, Role.RECEPTIONIST] },
+      },
+      {
         path: 'patients/:id/print',
         loadComponent: () =>
           import('./pages/patients/patient-print.component').then(
@@ -177,6 +186,24 @@ export const appRoutes: Route[] = [
         },
       },
       {
+        path: 'finance/ledger',
+        loadComponent: () =>
+          import('./pages/finance/office-ledger.component').then(
+            (m) => m.OfficeLedgerComponent,
+          ),
+        canActivate: [roleGuard],
+        data: { roles: [Role.ADMIN, Role.RECEPTIONIST] },
+      },
+      {
+        path: 'finance/profit-loss',
+        loadComponent: () =>
+          import('./pages/finance/profit-loss-sheet.component').then(
+            (m) => m.ProfitLossSheetComponent,
+          ),
+        canActivate: [roleGuard],
+        data: { roles: [Role.ADMIN, Role.RECEPTIONIST] },
+      },
+      {
         path: 'admin/users',
         loadComponent: () =>
           import('./pages/admin/admin-users.component').then(
@@ -208,6 +235,15 @@ export const appRoutes: Route[] = [
         loadComponent: () =>
           import('./pages/admin/admin-lab-templates.component').then(
             (m) => m.AdminLabTemplatesComponent,
+          ),
+        canActivate: [roleGuard],
+        data: { roles: [Role.ADMIN] },
+      },
+      {
+        path: 'admin/backup',
+        loadComponent: () =>
+          import('./pages/admin/admin-backup.component').then(
+            (m) => m.AdminBackupComponent,
           ),
         canActivate: [roleGuard],
         data: { roles: [Role.ADMIN] },

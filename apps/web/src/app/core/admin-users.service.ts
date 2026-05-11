@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
   CreateStaffUserRequest,
   StaffUserSummary,
@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AdminUsersService {
-  constructor(private readonly http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   list(): Observable<StaffUserSummary[]> {
     return this.http.get<StaffUserSummary[]>('/api/admin/users');

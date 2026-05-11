@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, computed, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   AuthUser,
@@ -29,10 +29,8 @@ export class AuthService {
     () => this.userSignal()?.role === Role.ADMIN,
   );
 
-  constructor(
-    private readonly http: HttpClient,
-    private readonly router: Router,
-  ) {}
+  private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
 
   private readUserFromStorage(): AuthUser | null {
     if (typeof localStorage === 'undefined') return null;
@@ -65,7 +63,10 @@ export class AuthService {
 
   async login(body: LoginRequest): Promise<void> {
     const res = await firstValueFrom(
-      this.http.post<LoginResponse>('/api/auth/login', body),
+      this.http.post<LoginResponse>('/api/auth/login', {
+        email: body.email.trim().toLowerCase(),
+        password: body.password,
+      }),
     );
     localStorage.setItem(TOKEN_KEY, res.accessToken);
     this.tokenSignal.set(res.accessToken);

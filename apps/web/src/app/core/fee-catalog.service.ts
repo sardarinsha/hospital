@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
   CreateFeeCatalogItemDto,
   FeeCatalogItem,
@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class FeeCatalogService {
-  constructor(private readonly http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   listActive(): Observable<FeeCatalogItem[]> {
     return this.http.get<FeeCatalogItem[]>('/api/fee-catalog');

@@ -55,6 +55,46 @@ export class PatientFeesController {
   }
 
   @Roles(Role.ADMIN, Role.RECEPTIONIST)
+  @Post(':lineId/payment')
+  async recordPayment(
+    @Req() req: Request & { user: RequestUser },
+    @Param('patientId', new ParseUUIDPipe()) patientId: string,
+    @Param('lineId', new ParseUUIDPipe()) lineId: string,
+  ) {
+    await this.patientsService.assertCanAccessPatient(
+      patientId,
+      req.user.role,
+      req.user.id,
+    );
+    return this.patientFeesService.setLinePaid(
+      patientId,
+      lineId,
+      true,
+      req.user.id,
+    );
+  }
+
+  @Roles(Role.ADMIN, Role.RECEPTIONIST)
+  @Delete(':lineId/payment')
+  async voidPayment(
+    @Req() req: Request & { user: RequestUser },
+    @Param('patientId', new ParseUUIDPipe()) patientId: string,
+    @Param('lineId', new ParseUUIDPipe()) lineId: string,
+  ) {
+    await this.patientsService.assertCanAccessPatient(
+      patientId,
+      req.user.role,
+      req.user.id,
+    );
+    return this.patientFeesService.setLinePaid(
+      patientId,
+      lineId,
+      false,
+      req.user.id,
+    );
+  }
+
+  @Roles(Role.ADMIN, Role.RECEPTIONIST)
   @Patch(':lineId')
   async update(
     @Req() req: Request & { user: RequestUser },

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
   DashboardOverview,
   LabBenchOverview,
@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
-  constructor(private readonly http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   overview(): Observable<DashboardOverview> {
     return this.http.get<DashboardOverview>('/api/dashboard/overview');

@@ -15,6 +15,7 @@ import html2pdf from 'html2pdf.js';
 import { Button } from 'primeng/button';
 import { Tooltip } from 'primeng/tooltip';
 import { APP_BRANDING } from '../../core/branding';
+import { CLINIC_PRINT } from '../../core/clinic-print.constants';
 import { LabReportsApiService } from '../../core/lab-reports-api.service';
 
 @Component({
@@ -37,6 +38,7 @@ export class LabReportPrintComponent implements OnInit, OnDestroy {
   readonly printedAt = signal(new Date());
   readonly pdfBusy = signal(false);
   readonly branding = APP_BRANDING;
+  readonly clinic = CLINIC_PRINT;
 
   ngOnInit(): void {
     this.previousTitle = this.title.getTitle();

@@ -1,11 +1,15 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { CreateDoctorRequest, DoctorSummary } from '@hospital/shared';
+import { inject, Injectable } from '@angular/core';
+import {
+  CreateDoctorRequest,
+  DoctorSummary,
+  UpdateDoctorRequest,
+} from '@hospital/shared';
 import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AdminDoctorsService {
-  constructor(private readonly http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   list(): Observable<DoctorSummary[]> {
     return this.http.get<DoctorSummary[]>('/api/admin/doctors');
@@ -13,5 +17,13 @@ export class AdminDoctorsService {
 
   create(body: CreateDoctorRequest): Observable<DoctorSummary> {
     return this.http.post<DoctorSummary>('/api/admin/doctors', body);
+  }
+
+  update(id: string, body: UpdateDoctorRequest): Observable<DoctorSummary> {
+    return this.http.patch<DoctorSummary>(`/api/admin/doctors/${id}`, body);
+  }
+
+  delete(id: string): Observable<void> {
+    return this.http.delete<void>(`/api/admin/doctors/${id}`);
   }
 }
